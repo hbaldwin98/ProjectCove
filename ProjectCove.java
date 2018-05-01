@@ -1,117 +1,82 @@
 package projectCove;
 
-import java.util.InputMismatchException;
-import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
-
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-public class ProjectCove
+public class ProjectCove extends Display
 {
 	static Player player;
 	static Monster monster;
-	static Scanner input = new Scanner(System.in);
 
 	public static void main(String[] args)
 	{
-		monster = new Monster();
 		player = new Player();
 
-		//				for(int i = 0; i < 15; i++)
-		//				{
-		//					if(monster.getAliveStatus() == false)
-		//					{
-		//						System.out.println("Monster is dead!");
-		//						player.giveExp(monster.getExperience());
-		//						break;
-		//					}
-		//					else
-		//					{
-		//						System.out.println(monster.getName() + " takes: " + player.attack(monster) + "(" + monster.getHealth() + ")");
-		//						try
-		//						{
-		//							TimeUnit.SECONDS.sleep(1);
-		//						} catch (InterruptedException e)
-		//						{
-		//							// TODO Auto-generated catch block
-		//							e.printStackTrace();
-		//						}
-		//		
-		//						
-		//					}
-		//				}
+		display();
 
-
-		while(true)
+		while (true)
 		{
-			monster = new Monster(2);
+			monster = new Monster(player.getLevel());
 			encounter(monster, player);
 		}
 	}
 
-	/***Deals with battle encounters between the player and monster*/
+	/*** Deals with battle encounters between the player and monster */
 	public static void encounter(Monster monster, Player player)
 	{
-		while(monster.isAliveStatus() == true)
+		while (monster.isAliveStatus())
 		{
-			System.out.println("Press 1 to attack!\nPress 2 to use health potion!");
-			int option = -1;
-
-			//catches if the user inputs anything other than a number.
-			try {
-				option = input.nextInt();
-			} catch (InputMismatchException a)
+			// if no input, display the default attack text
+			while (input.equals(""))
 			{
-				System.out.println("Please input a valid number.\n");
-				input.nextLine();
+				screenText.setText("You have " + player.getCurrentHealth() + " health left." + "\nThe "
+						+ monster.getName() + " has " + monster.getHealth() + " health left!"
+						+ "\nWhat would you like to do? (ATTACK/HEAL)");
+				pause(750);
 			}
 
-			//The option of 1 is attacking. This starts a scenario where the player attacks and than the monster attacks.
-			if(option == 1) 
+			// The option of 1 is attacking. This starts a scenario where the player attacks
+			// and then the monster attacks.
+			if (input.equalsIgnoreCase("attack"))
 			{
-				System.out.println("You dealt " + player.attack(monster) + " damage to the " + monster.getName() + "!");
-
-				try
+				screenText.setText("You deal " + player.attack(monster) + " damage to the " + monster.getName() + "!");
+				
+				pause();
+				
+				// checks life status of monster.
+				if (monster.isAliveStatus() == false)
 				{
-					TimeUnit.SECONDS.sleep(1);
-				} catch (InterruptedException e)
-				{
-					e.printStackTrace();
-				}
-
-				if(monster.isAliveStatus() == false)
-				{
-					System.out.println("The monster is dead!");
+					screenText.setText("The monster is dead!");
+					pause();
 					player.giveExp(monster.getExperience());
+					monster.rollDrop(player);
+
 				}
-				else	
+
+				// if the monster is still alive have him attack the player
+				else
 				{
-					System.out.println(monster.getName() + " has: " + monster.getHealth() + " HP left.");
+					// monster attacks the player
+					screenText.append("\nYou take " + monster.attack(player) + " damage!");
+					pause();
 
-					try
+					// checks if the player is alive
+					if (player.isAliveStatus() == false)
 					{
-						TimeUnit.SECONDS.sleep(1);
-					} catch (InterruptedException e)
-					{
-						e.printStackTrace();
-					}
-
-					System.out.println("Player takes: " + monster.attack(player) + "(" + player.getCurrentHealth() + ")\n");
-
-					if(player.isAliveStatus() == false)
-					{
-						System.out.println("You were killed! Try again later!");
+						screenText.setText("You were killed! Try again later!");
+						pause(3000);
 						System.exit(0);
 					}
 				}
-			} 
-			else if (option == 2)
+			}
+			// if the option selected is 2, then the player uses a health potion.
+			else if (input.equalsIgnoreCase("heal"))
 				player.useHealthPotion();
 			else
-				System.out.println("Please input something other than " + option + ". Like attack with 1 or something.");
-		}
-	}
+			{
+				screenText.setText("Sorry, command not recognized.");
+				pause();
+			}
 
+			input = "";
+		}
+
+	}
 }
