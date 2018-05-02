@@ -1,23 +1,99 @@
 package projectCove;
 
-public class ProjectCove extends Display
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.util.concurrent.TimeUnit;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JFrame;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
+public class ProjectCove
 {
-	static Player player;
-	static Monster monster;
+	public static JTextArea screenText = new JTextArea("");
+	public static JTextField textInput = new JTextField("");
+	public static String input = "";
 
-	public static void main(String[] args)
+	public static void pause()
 	{
-		player = new Player();
-
-		display();
-
-		while (true)
+		try
 		{
-			monster = new Monster(player.getLevel());
-			encounter(monster, player);
+			TimeUnit.MILLISECONDS.sleep(1500);
+		} catch (InterruptedException e)
+		{
+			e.printStackTrace();
 		}
 	}
 
+	public static void pause(int time)
+	{
+		try
+		{
+			TimeUnit.MILLISECONDS.sleep(time);
+		} catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	public static void display()
+	{
+
+		JFrame display = new JFrame("Project Cove");
+		Dimension d = new Dimension(800, 400);
+		Container c = display.getContentPane();
+		Font font = new Font("Verdana", Font.BOLD, 14);
+		display.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		Action action = new AbstractAction()
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				input = textInput.getText();
+				textInput.setText("");
+			}
+		};
+
+		screenText.setLineWrap(true);
+		screenText.setWrapStyleWord(true);
+		screenText.setBounds(25, 25, 600, 300);
+		screenText.setFont(font);
+		screenText.setEditable(false);
+		screenText.setForeground(Color.WHITE);
+		screenText.setBackground(Color.BLACK);
+		textInput.setBounds(0, 385, 810, 25);
+		textInput.addActionListener(action);
+		c.setLayout(null);
+		c.setBackground(Color.BLACK);
+		c.setPreferredSize(d);
+		c.add(textInput);
+		c.add(screenText);
+		display.pack();
+		display.setVisible(true);
+		display.setResizable(false);
+	}
+	
+	public static void mainMenu()
+	{
+		while (!input.equalsIgnoreCase("play"))
+		{
+			screenText.setText("Welcome to Project Cove! This is a short-narrative adventure game with "
+					+ "some RPG elements incorporated. The ultimate goal of the game is to reach the end,"
+					+ " but be warned, skeletons are on the loose and will put up a fight!\n\n"
+					+ "As soon as you would like to play, type PLAY.");
+			pause();
+		}
+		input = "";
+	}
+	
 	/*** Deals with battle encounters between the player and monster */
 	public static void encounter(Monster monster, Player player)
 	{
@@ -37,9 +113,9 @@ public class ProjectCove extends Display
 			if (input.equalsIgnoreCase("attack"))
 			{
 				screenText.setText("You deal " + player.attack(monster) + " damage to the " + monster.getName() + "!");
-				
+
 				pause();
-				
+
 				// checks life status of monster.
 				if (monster.isAliveStatus() == false)
 				{
