@@ -103,9 +103,10 @@ public class Monster extends Play
 			player.giveHealthPotion();
 			screenText.append("\n" + name + " drops a health potion!");
 		}
+		
 		// rolls to see if the player gets a weapon drop. The drop damage changes with
 		// the monster's level.
-		if (Math.random() >= 0.1)
+		if (Math.random() >= 0.7)
 		{
 			Weapon weapon = null;
 

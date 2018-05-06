@@ -4,6 +4,8 @@ public class Areas extends ProjectCove
 {
 	private static int id;
 	private static boolean battle;
+	private static boolean battleMode;
+	private static int currentEncounter;
 
 	Areas()
 	{
@@ -12,10 +14,15 @@ public class Areas extends ProjectCove
 
 	public static void command(String input)
 	{
-		if (battle)
+		if (input.equals("battlemode"))
 		{
-			battle = battle(battle);
-		} else
+			input = "";
+			battleMode = true;
+		}
+
+		if (battle || battleMode)
+			battle = battle(battle, currentEncounter);
+		else
 		{
 			if (id == 1)
 				beach(input);
@@ -52,13 +59,33 @@ public class Areas extends ProjectCove
 		screenText.setText(
 				"It takes you a few minutes to adjust your eyes, but after that you see a gigantic cave system. "
 						+ "Stalagmites hang all around and blue moss seems to glow in the corner. The cave goes deeper in.");
-		if (input.contains("blue") || input.contains("moss"))
+		if ((input.contains("blue") || input.contains("moss")) && player.getActiveEncounter(0))
 		{
 			screenText.setText("You go to the blue moss. Reaching down you pick it up out of the ground. "
 					+ "Strangely the moss seems to continue glowing even after being picked up. "
+					+ "Strangely, you notice a skeleton of a human wedged into the stone wall."
 					+ "As you start to walk away a rumbling sound appears from behind you. \n\nA skeleton attacks! (Press Enter to start the battle)");
-			battle = true;
-			newMonster(1);
+
+			newBattle(player.getEncounter(0).getMonsterLevel(), 0);
+		} else if ((input.contains("blue") || input.contains("moss")) && !player.getActiveEncounter(0))
+		{
+			screenText.setText(
+					"You see the spot where you picked up the moss as well as a hole in the wall where the skeleton attacked you. "
+							+ "It seemed to have ripped itself out of the stone. Those skeletons must be strong.");
 		}
+	}
+
+	public static void newBattle(int level, int encounter)
+	{
+		currentEncounter = encounter;
+		battle = true;
+		newMonster(1);
+	}
+
+	public static Encounter[] populateEncounters(Encounter[] encounters)
+	{
+		encounters = new Encounter[5];
+		encounters[0] = new Encounter("battle", "blue moss", 1, true);
+		return encounters;
 	}
 }

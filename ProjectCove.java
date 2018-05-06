@@ -4,11 +4,9 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.util.concurrent.TimeUnit;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -22,28 +20,6 @@ public class ProjectCove
 	private static Areas areas;
 	public static Player player;
 	public static Monster monster;
-
-	public static void pause()
-	{
-		try
-		{
-			TimeUnit.MILLISECONDS.sleep(1500);
-		} catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
-	}
-
-	public static void pause(int time)
-	{
-		try
-		{
-			TimeUnit.MILLISECONDS.sleep(time);
-		} catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
-	}
 
 	public static void startGame()
 	{
@@ -66,20 +42,36 @@ public class ProjectCove
 		screenText.setForeground(Color.WHITE);
 		screenText.setBackground(Color.BLACK);
 		textInput.setBounds(0, 385, 810, 25);
-
-		Action action = new AbstractAction()
+		
+		textInput.addKeyListener(new KeyListener()
 		{
-			public void actionPerformed(ActionEvent e)
+			public void keyPressed(KeyEvent e)
 			{
-				input = textInput.getText().toLowerCase();
-				;
-				textInput.setText("");
+				int key = e.getKeyCode();
+				if (key == KeyEvent.VK_ENTER)
+				{
+					input = textInput.getText().toLowerCase();
 
-				Areas.command(input);
+					textInput.setText("");
+
+					Areas.command(input);
+				}
 			}
-		};
 
-		textInput.addActionListener(action);
+			@Override
+			public void keyReleased(KeyEvent arg0)
+			{
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void keyTyped(KeyEvent arg0)
+			{
+				// TODO Auto-generated method stub
+
+			}
+		});
 
 		c.setLayout(null);
 		c.setBackground(Color.BLACK);
@@ -93,6 +85,7 @@ public class ProjectCove
 		mainMenu();
 	}
 
+	/*** The main menu text. */
 	public static void mainMenu()
 	{
 		screenText.setText("Welcome to Project Cove! This is a short-narrative adventure game with "
@@ -102,29 +95,48 @@ public class ProjectCove
 				+ "\n\nAs soon as you would like to play, type PLAY. Or type anything for that matter. Or just press enter. It all works.");
 	}
 
+	/*
+	 * battle an enemy. Take in level of monster and fight until death.
+	 * while true
+	 * 	display default battle text
+	 * 	if (input == "attack")
+	 * 		display damage dealt to monster
+	 * 		if not monster is alive
+	 * 			display monster is dead
+	 * 			give player the exp relative to the monster level
+	 * 			roll player drop for health and weapon
+	 * 			set the active encounter to false.
+	 * 			return false
+	 * 		else
+	 * 			monster deals damage to player
+	 * 			if player is not alive
+	 * 				display player dead
+	 * 				exit game
+	 * 	else if (input == "heal")
+	 * 		use player health potion
+	 * 
+	 * reset input to "" (prevent's doing the same action again and getting into a loop)
+	 * return true;
+	 */
+	
 	/*** Deals with combat encounters between the player and monster */
-	public static boolean battle(boolean battle)
+	public static boolean battle(boolean battle, int encounter)
 	{
-		if (!monster.isAliveStatus())
-			return false;
-
-		if (input.equals(""))
-		{
-			screenText.setText("You have " + player.getCurrentHealth() + " health left." + "\nThe " + monster.getName()
-					+ " has " + monster.getHealth() + " health left!" + "\nWhat would you like to do? (ATTACK/HEAL)");
-		}
+		screenText.setText("You have " + player.getCurrentHealth() + " health left." + "\nThe " + monster.getName()
+				+ " has " + monster.getHealth() + " health left!" + "\nWhat would you like to do? (ATTACK/HEAL)");
 
 		if (input.equalsIgnoreCase("attack"))
 		{
 			screenText.setText("You deal " + player.attack(monster) + " damage to the " + monster.getName() + "!");
 
 			// checks life status of monster.
-			if (monster.isAliveStatus() == false)
+			if (!monster.isAliveStatus())
 			{
 				screenText.setText("The monster is dead!");
 
 				player.giveExp(monster.getExperience());
 				monster.rollDrop(player);
+				player.getEncounter(encounter).setActive(false);
 				return false;
 			}
 
@@ -135,21 +147,19 @@ public class ProjectCove
 				screenText.append("\nYou take " + monster.attack(player) + " damage!");
 
 				// checks if the player is alive
-				if (player.isAliveStatus() == false)
+				if (!player.isAliveStatus())
 				{
 					screenText.setText("You were killed! Try again later!");
 					System.exit(0);
 				}
 
-				input = "";
 			}
-
-			return true;
 		}
 		// if the option selected is 2, then the player uses a health potion.
 		else if (input.equalsIgnoreCase("heal"))
 			player.useHealthPotion();
 
+		input = "";
 		return true;
 	}
 

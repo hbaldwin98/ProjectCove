@@ -15,6 +15,7 @@ public class Player extends ProjectCove
 	private double hitModifier;
 	private boolean aliveStatus;
 	private final int[] EXP_TABLE = { 83, 151, 275, 500, 911, 1657, 3017, 5490, 9992 };
+	private Encounter[] encounters;
 	private Weapon currentWeapon;
 
 	public Player()
@@ -29,7 +30,10 @@ public class Player extends ProjectCove
 		aliveStatus = true;
 		minDamageDefault = 2;
 		maxDamageDefault = 6;
-
+		
+		encounters = Areas.populateEncounters(encounters);
+		
+		
 		if (currentWeapon != null)
 		{
 			minDamage = minDamageDefault + currentWeapon.getMinDamage();
@@ -174,6 +178,16 @@ public class Player extends ProjectCove
 		currentWeapon = weapon;
 		minDamage = minDamageDefault + currentWeapon.getMinDamage();
 		maxDamage = maxDamageDefault + currentWeapon.getMaxDamage();
+	}
+	
+	public Encounter getEncounter(int encounter)
+	{
+		return encounters[encounter];
+	}
+	
+	public boolean getActiveEncounter(int encounter)
+	{
+		return encounters[encounter].isActive();
 	}
 
 }
