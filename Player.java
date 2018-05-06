@@ -1,6 +1,6 @@
 package projectCove;
 
-public class Player extends Display
+public class Player extends ProjectCove
 {
 	private int score;
 	private int currentHealth;
@@ -16,8 +16,6 @@ public class Player extends Display
 	private boolean aliveStatus;
 	private final int[] EXP_TABLE = { 83, 151, 275, 500, 911, 1657, 3017, 5490, 9992 };
 	private Weapon currentWeapon;
-	// private Spell currentSpell;
-	// private Perks perks;
 
 	public Player()
 	{
@@ -78,18 +76,13 @@ public class Player extends Display
 		{
 			level++;
 			screenText.setText("Congratulations! You leveled up to " + level);
-			pause();
 			screenText.append("\nMinimum damage increased by: " + (int) ((minDamageDefault + 1.4) * 0.3) + " ("
 					+ (minDamageDefault += (int) ((minDamageDefault + 1.4) * 0.3)) + ")");
-			pause();
 			screenText.append(("\nMaximum damage increased by: " + (int) ((maxDamageDefault + 1.4) * 0.3) + " ("
 					+ (maxDamageDefault += (int) ((maxDamageDefault + 1.4) * 0.24)) + ")"));
-			pause();
 			screenText.append(("\nMaximum health increased by: " + (int) ((maxHealth + 1.4) * 0.3) + " ("
 					+ (maxHealth += (int) ((maxHealth + 1.4) * 0.3)) + ")"));
-			pause();
 			screenText.append(("\nHit-chance increased."));
-			pause();
 			hitModifier += 0.03;
 			currentHealth = maxHealth;
 			minDamage = minDamageDefault + currentWeapon.getMinDamage();
@@ -97,7 +90,6 @@ public class Player extends Display
 		} else
 		{
 			screenText.setText(("You're already at max level!"));
-			pause();
 		}
 	}
 
@@ -110,7 +102,6 @@ public class Player extends Display
 	{
 		experience += exp;
 		screenText.append("\nYou earned: " + exp + "exp!");
-		pause();
 		while (experience > EXP_TABLE[level - 1])
 			if (level != 10 && experience >= EXP_TABLE[level - 1])
 				levelUp();
@@ -123,14 +114,12 @@ public class Player extends Display
 		if (potionAmount == 0)
 		{
 			screenText.setText(("You are out of potions!"));
-			pause();
 			return;
 		}
 
 		if (currentHealth == maxHealth)
 		{
 			screenText.setText(("Health is already full!\n"));
-			pause();
 		} else
 		{
 			potionAmount--;
@@ -140,16 +129,12 @@ public class Player extends Display
 			if (currentHealth >= maxHealth)
 			{
 				screenText.setText("You were healed: " + healAmount + ". You are now at MaxHP: " + maxHealth);
-				pause(1000);
 				screenText.append("\nYou now have " + potionAmount + " health potions left.\n");
-				pause();
 				currentHealth = maxHealth;
 			} else
 			{
 				screenText.setText("You were healed: " + healAmount + ". You now have: " + currentHealth + "HP!");
-				pause(1000);
 				screenText.append("\nYou now have " + potionAmount + " health potions left.\n");
-				pause();
 			}
 		}
 	}

@@ -1,6 +1,8 @@
 package projectCove;
 
-public class Monster extends ProjectCove
+import javax.swing.JOptionPane;
+
+public class Monster extends Play
 {
 	private int health;
 	private int level;
@@ -100,7 +102,6 @@ public class Monster extends ProjectCove
 		{
 			player.giveHealthPotion();
 			screenText.append("\n" + name + " drops a health potion!");
-			pause(1500);
 		}
 		// rolls to see if the player gets a weapon drop. The drop damage changes with
 		// the monster's level.
@@ -128,35 +129,31 @@ public class Monster extends ProjectCove
 
 			screenText.setText(name + " drops " + weapon.getName() + ". (Damage: " + weapon.getMinDamage() + "-"
 					+ weapon.getMaxDamage() + ")");
-			pause();
 			// if the player does not have a current weapon, then automatically equip the
 			// new one.
 			if (player.getCurrentWeapon() == null)
 			{
 				screenText.append("\nYou don't have a weapon! Equipping new weapon.");
-				pause(1000);
 				player.setCurrentWeapon(weapon);
-				return;
-			}
 
-			input = "";
-			// ask the player if they want to switch their old weapon out for the new one.
-			while (input.equals(""))
-			{
-				screenText.setText("Do you want to swap out your current weapon? (Yes/No)\nOLD: "
-						+ player.getCurrentWeapon().getName() + ". (Damage: " + player.getCurrentWeapon().getMinDamage()
-						+ "-" + player.getCurrentWeapon().getMaxDamage() + ")" + "\nNEW: " + weapon.getName()
-						+ ". (Damage: " + weapon.getMinDamage() + "-" + weapon.getMaxDamage() + ")");
-				pause(750);
-			}
-			// if yes, then switch, else no.
-			if (input.equalsIgnoreCase("yes"))
-			{
-				player.setCurrentWeapon(weapon);
-				screenText.append("\nWeapon swapped!");
-				pause();
 			} else
-				return;
+			{
+				int response = JOptionPane.showConfirmDialog(null,
+						"Do you want to swap out your current weapon? (Yes/No)\nOLD: "
+								+ player.getCurrentWeapon().getName() + ". (Damage: "
+								+ player.getCurrentWeapon().getMinDamage() + "-"
+								+ player.getCurrentWeapon().getMaxDamage() + ")" + "\nNEW: " + weapon.getName()
+								+ ". (Damage: " + weapon.getMinDamage() + "-" + weapon.getMaxDamage() + ")");
+				// ask the player if they want to switch their old weapon out for the new one.
+
+				// if yes, then switch, else no.
+				if (response == JOptionPane.YES_OPTION)
+				{
+					player.setCurrentWeapon(weapon);
+					screenText.append("\nWeapon swapped!");
+				} else
+					return;
+			}
 		}
 	}
 

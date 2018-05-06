@@ -15,9 +15,13 @@ import javax.swing.JTextField;
 
 public class ProjectCove
 {
-	public static JTextArea screenText = new JTextArea("");
-	public static JTextField textInput = new JTextField("");
-	public static String input = "";
+	public static JTextArea screenText;
+	public static JTextField textInput;
+	public static String input;
+	private static JFrame display;
+	private static Areas areas;
+	public static Player player;
+	public static Monster monster;
 
 	public static void pause()
 	{
@@ -41,118 +45,116 @@ public class ProjectCove
 		}
 	}
 
-	public static void display()
+	public static void startGame()
 	{
+		player = new Player();
+		areas = new Areas();
+		monster = new Monster();
 
-		JFrame display = new JFrame("Project Cove");
-		Dimension d = new Dimension(800, 400);
+		screenText = new JTextArea("");
+		textInput = new JTextField("");
+		input = "";
+		display = new JFrame("Project Cove");
 		Container c = display.getContentPane();
-		Font font = new Font("Verdana", Font.BOLD, 14);
 		display.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		Action action = new AbstractAction()
-		{
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				input = textInput.getText();
-				textInput.setText("");
-			}
-		};
 
 		screenText.setLineWrap(true);
 		screenText.setWrapStyleWord(true);
 		screenText.setBounds(25, 25, 600, 300);
-		screenText.setFont(font);
+		screenText.setFont(new Font("Verdana", Font.BOLD, 14));
 		screenText.setEditable(false);
 		screenText.setForeground(Color.WHITE);
 		screenText.setBackground(Color.BLACK);
 		textInput.setBounds(0, 385, 810, 25);
+
+		Action action = new AbstractAction()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				input = textInput.getText().toLowerCase();
+				;
+				textInput.setText("");
+
+				Areas.command(input);
+			}
+		};
+
 		textInput.addActionListener(action);
+
 		c.setLayout(null);
 		c.setBackground(Color.BLACK);
-		c.setPreferredSize(d);
+		c.setPreferredSize(new Dimension(800, 400));
 		c.add(textInput);
 		c.add(screenText);
 		display.pack();
 		display.setVisible(true);
 		display.setResizable(false);
+
+		mainMenu();
 	}
-	
+
 	public static void mainMenu()
 	{
-		while (!input.equalsIgnoreCase("play"))
-		{
-			screenText.setText("Welcome to Project Cove! This is a short-narrative adventure game with "
-					+ "some RPG elements incorporated. The ultimate goal of the game is to reach the end,"
-					+ " but be warned, skeletons are on the loose and will put up a fight!\n\n"
-					+ "As soon as you would like to play, type PLAY.");
-			pause();
-		}
-		input = "";
+		screenText.setText("Welcome to Project Cove! This is a short-narrative adventure game with "
+				+ "some RPG elements incorporated. The ultimate goal of the game is to reach the end,"
+				+ " but be warned, skeletons are on the loose and will fight you!\n\n"
+				+ "Once you are finished reading each portion of the story, type NEXT to go to the next part or you can try to to find some extra stuff by searching around *wink wink*."
+				+ "\n\nAs soon as you would like to play, type PLAY. Or type anything for that matter. Or just press enter. It all works.");
 	}
-	
-	/*** Deals with battle encounters between the player and monster */
-	public static void encounter(Monster monster, Player player)
+
+	/*** Deals with combat encounters between the player and monster */
+	public static boolean battle(boolean battle)
 	{
-		while (monster.isAliveStatus())
+		if (!monster.isAliveStatus())
+			return false;
+
+		if (input.equals(""))
 		{
-			// if no input, display the default attack text
-			while (input.equals(""))
+			screenText.setText("You have " + player.getCurrentHealth() + " health left." + "\nThe " + monster.getName()
+					+ " has " + monster.getHealth() + " health left!" + "\nWhat would you like to do? (ATTACK/HEAL)");
+		}
+
+		if (input.equalsIgnoreCase("attack"))
+		{
+			screenText.setText("You deal " + player.attack(monster) + " damage to the " + monster.getName() + "!");
+
+			// checks life status of monster.
+			if (monster.isAliveStatus() == false)
 			{
-				screenText.setText("You have " + player.getCurrentHealth() + " health left." + "\nThe "
-						+ monster.getName() + " has " + monster.getHealth() + " health left!"
-						+ "\nWhat would you like to do? (ATTACK/HEAL)");
-				pause(750);
+				screenText.setText("The monster is dead!");
+
+				player.giveExp(monster.getExperience());
+				monster.rollDrop(player);
+				return false;
 			}
 
-			// The option of 1 is attacking. This starts a scenario where the player attacks
-			// and then the monster attacks.
-			if (input.equalsIgnoreCase("attack"))
-			{
-				screenText.setText("You deal " + player.attack(monster) + " damage to the " + monster.getName() + "!");
-
-				pause();
-
-				// checks life status of monster.
-				if (monster.isAliveStatus() == false)
-				{
-					screenText.setText("The monster is dead!");
-					pause();
-					player.giveExp(monster.getExperience());
-					monster.rollDrop(player);
-
-				}
-
-				// if the monster is still alive have him attack the player
-				else
-				{
-					// monster attacks the player
-					screenText.append("\nYou take " + monster.attack(player) + " damage!");
-					pause();
-
-					// checks if the player is alive
-					if (player.isAliveStatus() == false)
-					{
-						screenText.setText("You were killed! Try again later!");
-						pause(3000);
-						System.exit(0);
-					}
-				}
-			}
-			// if the option selected is 2, then the player uses a health potion.
-			else if (input.equalsIgnoreCase("heal"))
-				player.useHealthPotion();
+			// if the monster is still alive have him attack the player
 			else
 			{
-				screenText.setText("Sorry, command not recognized.");
-				pause();
+				// monster attacks the player
+				screenText.append("\nYou take " + monster.attack(player) + " damage!");
+
+				// checks if the player is alive
+				if (player.isAliveStatus() == false)
+				{
+					screenText.setText("You were killed! Try again later!");
+					System.exit(0);
+				}
+
+				input = "";
 			}
 
-			input = "";
+			return true;
 		}
+		// if the option selected is 2, then the player uses a health potion.
+		else if (input.equalsIgnoreCase("heal"))
+			player.useHealthPotion();
 
+		return true;
+	}
+
+	public static void newMonster(int level)
+	{
+		monster = new Monster(level);
 	}
 }
