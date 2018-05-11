@@ -1,8 +1,11 @@
 package projectCove;
-
+/* Hunter Baldwin
+ * Monster class. Handles the created monsters (skeletons) and their attributes.
+ * As well deals with player drops from the monster.
+ */
 import javax.swing.JOptionPane;
 
-public class Monster extends Play
+public class Monster extends ProjectCove
 {
 	private int health;
 	private int level;
@@ -101,7 +104,7 @@ public class Monster extends Play
 		if (Math.random() >= 0.49)
 		{
 			player.giveHealthPotion();
-			screenText.append("\n" + name + " drops a health potion!");
+			setText(name + " drops a health potion!\n");
 		}
 		
 		// rolls to see if the player gets a weapon drop. The drop damage changes with
@@ -128,13 +131,13 @@ public class Monster extends Play
 				break;
 			}
 
-			screenText.setText(name + " drops " + weapon.getName() + ". (Damage: " + weapon.getMinDamage() + "-"
-					+ weapon.getMaxDamage() + ")");
+			setText("\n" + name + " drops " + weapon.getName() + ". (Damage: " + weapon.getMinDamage() + "-"
+					+ weapon.getMaxDamage() + ")\n");
 			// if the player does not have a current weapon, then automatically equip the
 			// new one.
 			if (player.getCurrentWeapon() == null)
 			{
-				screenText.append("\nYou don't have a weapon! Equipping new weapon.");
+				setText("\nYou don't have a weapon! Equipping new weapon.\n");
 				player.setCurrentWeapon(weapon);
 
 			} else
@@ -151,7 +154,7 @@ public class Monster extends Play
 				if (response == JOptionPane.YES_OPTION)
 				{
 					player.setCurrentWeapon(weapon);
-					screenText.append("\nWeapon swapped!");
+					setText("\nWeapon swapped!\n");
 				} else
 					return;
 			}

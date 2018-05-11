@@ -1,5 +1,8 @@
 package projectCove;
-
+/* Hunter Baldwin
+ * This class handles the weapons in the game. This
+ * includes the damage they deal and the name.
+ */
 import java.util.Random;
 
 public class Weapon
@@ -21,6 +24,13 @@ public class Weapon
 
 	public Weapon(int minDamage, int maxDamage)
 	{
+		randomize(minDamage, maxDamage);
+	}
+	
+	public Weapon(String name, String type, int minDamage, int maxDamage)
+	{
+		this.name = name;
+		this.type = type;
 		randomize(minDamage, maxDamage);
 	}
 

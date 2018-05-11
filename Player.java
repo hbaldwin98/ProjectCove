@@ -1,8 +1,12 @@
 package projectCove;
 
+/*
+ * Hunter Baldwin Player class includes all the attributes for the player. It
+ * also handles all types of encounters the player may deal with including:
+ * dealing damage, taking damage, healing, leveling, etc.
+ */
 public class Player extends ProjectCove
 {
-	private int score;
 	private int currentHealth;
 	private int maxHealth;
 	private int level;
@@ -12,6 +16,7 @@ public class Player extends ProjectCove
 	private int minDamage;
 	private int maxDamage;
 	private int potionAmount;
+	private int pos;
 	private double hitModifier;
 	private boolean aliveStatus;
 	private final int[] EXP_TABLE = { 83, 151, 275, 500, 911, 1657, 3017, 5490, 9992 };
@@ -20,7 +25,6 @@ public class Player extends ProjectCove
 
 	public Player()
 	{
-		score = 0;
 		maxHealth = 17;
 		currentHealth = maxHealth;
 		level = 1;
@@ -28,12 +32,11 @@ public class Player extends ProjectCove
 		potionAmount = 3;
 		hitModifier = 0.99;
 		aliveStatus = true;
-		minDamageDefault = 2;
-		maxDamageDefault = 6;
-		
+		minDamageDefault = 1;
+		maxDamageDefault = 5;
+		pos = 101;
 		encounters = Areas.populateEncounters(encounters);
-		
-		
+
 		if (currentWeapon != null)
 		{
 			minDamage = minDamageDefault + currentWeapon.getMinDamage();
@@ -79,21 +82,21 @@ public class Player extends ProjectCove
 		if (level < 10)
 		{
 			level++;
-			screenText.setText("Congratulations! You leveled up to " + level);
-			screenText.append("\nMinimum damage increased by: " + (int) ((minDamageDefault + 1.4) * 0.3) + " ("
+			setText("\n\nCongratulations! You leveled up to " + level);
+			setText("\n\nMinimum damage increased by: " + (int) ((minDamageDefault + 1.4) * 0.3) + " ("
 					+ (minDamageDefault += (int) ((minDamageDefault + 1.4) * 0.3)) + ")");
-			screenText.append(("\nMaximum damage increased by: " + (int) ((maxDamageDefault + 1.4) * 0.3) + " ("
+			setText(("\nMaximum damage increased by: " + (int) ((maxDamageDefault + 1.4) * 0.3) + " ("
 					+ (maxDamageDefault += (int) ((maxDamageDefault + 1.4) * 0.24)) + ")"));
-			screenText.append(("\nMaximum health increased by: " + (int) ((maxHealth + 1.4) * 0.3) + " ("
+			setText(("\nMaximum health increased by: " + (int) ((maxHealth + 1.4) * 0.3) + " ("
 					+ (maxHealth += (int) ((maxHealth + 1.4) * 0.3)) + ")"));
-			screenText.append(("\nHit-chance increased."));
+			setText(("\nHit-chance increased.\n"));
 			hitModifier += 0.03;
 			currentHealth = maxHealth;
 			minDamage = minDamageDefault + currentWeapon.getMinDamage();
 			maxDamage = maxDamageDefault + currentWeapon.getMaxDamage();
 		} else
 		{
-			screenText.setText(("You're already at max level!"));
+			setText(("\nYou're already at max level!\n"));
 		}
 	}
 
@@ -105,7 +108,9 @@ public class Player extends ProjectCove
 	public void giveExp(int exp)
 	{
 		experience += exp;
-		screenText.append("\nYou earned: " + exp + "exp!");
+		setText("You earned: " + exp + "exp!\n");
+		// this while loop is to ensure that in the off-chance the player somehow gets
+		// enough exp to level twice or more, it will level it appropriately.
 		while (experience > EXP_TABLE[level - 1])
 			if (level != 10 && experience >= EXP_TABLE[level - 1])
 				levelUp();
@@ -117,13 +122,13 @@ public class Player extends ProjectCove
 
 		if (potionAmount == 0)
 		{
-			screenText.setText(("You are out of potions!"));
+			setText(("\nYou are out of potions!\n"));
 			return;
 		}
 
 		if (currentHealth == maxHealth)
 		{
-			screenText.setText(("Health is already full!\n"));
+			setText(("\nHealth is already full!\n"));
 		} else
 		{
 			potionAmount--;
@@ -132,13 +137,13 @@ public class Player extends ProjectCove
 			currentHealth += healAmount;
 			if (currentHealth >= maxHealth)
 			{
-				screenText.setText("You were healed: " + healAmount + ". You are now at MaxHP: " + maxHealth);
-				screenText.append("\nYou now have " + potionAmount + " health potions left.\n");
+				setText("\nYou were healed: " + healAmount + ". You are now at MaxHP: " + maxHealth + "\n");
+				setText("\nYou now have " + potionAmount + " health potions left.\n");
 				currentHealth = maxHealth;
 			} else
 			{
-				screenText.setText("You were healed: " + healAmount + ". You now have: " + currentHealth + "HP!");
-				screenText.append("\nYou now have " + potionAmount + " health potions left.\n");
+				setText("\nYou were healed: " + healAmount + ". You now have: " + currentHealth + "HP!\n");
+				setText("\nYou now have " + potionAmount + " health potions left.\n");
 			}
 		}
 	}
@@ -163,6 +168,11 @@ public class Player extends ProjectCove
 		return level;
 	}
 
+	public int getMaxHealth()
+	{
+		return maxHealth;
+	}
+
 	public boolean isAliveStatus()
 	{
 		return aliveStatus;
@@ -173,18 +183,38 @@ public class Player extends ProjectCove
 		this.aliveStatus = aliveStatus;
 	}
 
+	public void setCurrentHealth(int health)
+	{
+		currentHealth = health;
+	}
+
 	public void setCurrentWeapon(Weapon weapon)
 	{
 		currentWeapon = weapon;
 		minDamage = minDamageDefault + currentWeapon.getMinDamage();
 		maxDamage = maxDamageDefault + currentWeapon.getMaxDamage();
 	}
-	
+
+	public void setPotionAmount(int potionAmount)
+	{
+		this.potionAmount = potionAmount;
+	}
+
+	public void setPos(int pos)
+	{
+		this.pos = pos;
+	}
+
+	public int getPos()
+	{
+		return pos;
+	}
+
 	public Encounter getEncounter(int encounter)
 	{
 		return encounters[encounter];
 	}
-	
+
 	public boolean getActiveEncounter(int encounter)
 	{
 		return encounters[encounter].isActive();

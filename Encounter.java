@@ -1,5 +1,9 @@
 package projectCove;
-
+/* Hunter Baldwin
+ * Encounter details a certain encounter. It includes the particular monster
+ * level, the type of encounter, the description of the encounter, and whether it is active or not.
+ * These are all manually entered and stored in the player class.
+ */
 public class Encounter
 {
 	private String type;
@@ -15,6 +19,10 @@ public class Encounter
 		active = true;
 	}
 
+	/***
+	 * Takes in the type, description of that type, a monster level (if a monster, otherwise set to 0),
+	 * and whether that encounter is active or not.
+	 */
 	Encounter(String type, String description, int monsterLevel, boolean active)
 	{
 		this.type = type;
