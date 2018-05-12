@@ -4,6 +4,7 @@ package projectCove;
  * level, the type of encounter, the description of the encounter, and whether it is active or not.
  * These are all manually entered and stored in the player class.
  */
+
 public class Encounter
 {
 	private String type;

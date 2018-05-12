@@ -1,10 +1,10 @@
 package projectCove;
-
 /*
  * Hunter Baldwin Player class includes all the attributes for the player. It
  * also handles all types of encounters the player may deal with including:
  * dealing damage, taking damage, healing, leveling, etc.
  */
+
 public class Player extends ProjectCove
 {
 	private int currentHealth;
@@ -23,6 +23,7 @@ public class Player extends ProjectCove
 	private Encounter[] encounters;
 	private Weapon currentWeapon;
 
+	/*** Create a new player with the default stats.*/
 	public Player()
 	{
 		maxHealth = 17;
@@ -92,8 +93,17 @@ public class Player extends ProjectCove
 			setText(("\nHit-chance increased.\n"));
 			hitModifier += 0.03;
 			currentHealth = maxHealth;
-			minDamage = minDamageDefault + currentWeapon.getMinDamage();
-			maxDamage = maxDamageDefault + currentWeapon.getMaxDamage();
+
+			if (currentWeapon != null)
+			{
+				minDamage = minDamageDefault + currentWeapon.getMinDamage();
+				maxDamage = maxDamageDefault + currentWeapon.getMaxDamage();
+			} else
+			{
+				minDamage = minDamageDefault;
+				maxDamage = maxDamageDefault;
+			}
+
 		} else
 		{
 			setText(("\nYou're already at max level!\n"));
@@ -115,6 +125,7 @@ public class Player extends ProjectCove
 			if (level != 10 && experience >= EXP_TABLE[level - 1])
 				levelUp();
 	}
+	//
 
 	public void useHealthPotion()
 	{

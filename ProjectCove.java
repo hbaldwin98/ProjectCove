@@ -1,8 +1,9 @@
 package projectCove;
-/* Hunter Baldwin
- * This class handles the GUI as well as includes certain functions
- * relating to the core game such as the battle function.
+/*
+ * Hunter Baldwin This class handles the GUI as well as includes certain
+ * functions relating to the core game such as the battle function.
  */
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -19,13 +20,14 @@ public class ProjectCove
 	private static JTextArea screenText;
 	private static JScrollPane scrollPane;
 	private static JTextField textInput;
-	protected static String input;
+	private static String input;
 	private static JFrame display;
 	private static Player player;
 	private static Monster monster;
 
 	public static void startGame()
 	{
+		//Creating the JFrame.
 		display = new JFrame();
 		display.setResizable(false);
 		display.setTitle("Project Cove");
@@ -37,7 +39,8 @@ public class ProjectCove
 		scrollPane = new JScrollPane();
 		scrollPane.setBounds(0, 0, 795, 348);
 		display.getContentPane().add(scrollPane);
-
+		
+		//these deal with the display area, the text on the screen.
 		screenText = new JTextArea();
 		screenText.setWrapStyleWord(true);
 		screenText.setLineWrap(true);
@@ -47,11 +50,12 @@ public class ProjectCove
 		screenText.setBackground(Color.BLACK);
 		screenText.setEditable(false);
 		screenText.setForeground(Color.WHITE);
+		
+		//Text input is where you type.
 		textInput = new JTextField();
-
 		textInput.setBounds(0, 347, 795, 25);
 		display.getContentPane().add(textInput);
-
+		
 		textInput.addKeyListener(new KeyListener()
 		{
 			public void keyPressed(KeyEvent e)
@@ -60,63 +64,66 @@ public class ProjectCove
 
 				if (key == KeyEvent.VK_ENTER)
 				{
-
-						input = textInput.getText().toLowerCase();
-						textInput.setText("");
-						Areas.command(input);
-					
+					//Sets input to the entered text.
+					setInput(textInput.getText().toLowerCase());
+					//Resets the TextField area to blank.
+					textInput.setText("");
+					//Calls command from the Areas class.
+					Areas.command(getInput());
 				}
 			}
 
 			@Override
 			public void keyReleased(KeyEvent arg0)
 			{
+				//these codes force the screen downwards when there is new information.
 				JScrollBar vertical = scrollPane.getVerticalScrollBar();
 				vertical.setValue(vertical.getMaximum());
-
 			}
 
 			@Override
 			public void keyTyped(KeyEvent arg0)
 			{
 				// TODO Auto-generated method stub
-
 			}
 		});
+		
 		display.setVisible(true);
-		textInput.requestFocus();
 		mainMenu();
 	}
 
 	/*** The main menu text. */
 	private static void mainMenu()
 	{
+		//creates the player and monster
 		player = new Player();
 		monster = new Monster();
+		//allows the code to access the Areas class where the actual game is stored.
 		new Areas();
 
 		setText("Welcome to Project Cove! This is a short-narrative adventure game with "
 				+ "some RPG elements incorporated. The ultimate goal of the game is to reach the end,"
 				+ " but be warned, skeletons are on the loose and will fight you!\n\n"
-				+ "Continue the story by following the cues the story gives you of the next area. As well, don't forgot to search around, you never know what you might find!"
+				+ "Continue the story by following the cues the story gives you in the introduction of every area. As well, don't forgot to search around,"
+				+ " you never know what you might find! if you're ever confused, you can always focus back on the intro area text by typing 'back'!"
 				+ "\n\nAs soon as you would like to play, type PLAY. Or type anything for that matter. Or just press enter. It all works.\n\n"
 				+ "Additionally, if you'd like to do the Battlemode, a mode where you fight skeletons until you drop, type 'battlemode.'\n"
 				+ "\nDouble additionally, if you type anything and the output screen looks the same, either you inputted something invalid or you just have to press enter again."
-				+ " This is just a temporary fix until I can force it to the next display. :)"
-				+ "\n");
+				+ " This is just a temporary fix until I can force it to the next display. :)" + "\n");
 
 	}
+
 	/***
 	 * Deals with combat encounters between the player and monster Takes in the
 	 * boolean for true (battle is still going) or false (battle is over)
 	 */
 	public static boolean battle(boolean battle, Encounter encounter)
 	{
-		if (input.equals(""))
-			setText("\nYou have " + player.getCurrentHealth() + " health left." + "\nThe " + monster.getName()
-					+ " has " + monster.getHealth() + " health left!" + "\nWhat would you like to do? (ATTACK/HEAL)\n");
+		if (getInput().equals(""))
+			setText("\nYou have " + player.getCurrentHealth() + " health left." + "\nThe " + monster.getName() + " has "
+					+ monster.getHealth() + " health left!" + "\nWhat would you like to do? (ATTACK/HEAL)\n");
 
-		if (input.equalsIgnoreCase("attack"))
+		if (getInput().equalsIgnoreCase("attack"))
 		{
 			setText("\nYou deal " + player.attack(monster) + " damage to the " + monster.getName() + "!\n");
 
@@ -141,16 +148,15 @@ public class ProjectCove
 				if (!player.isAliveStatus())
 				{
 					setText("\nYou were killed! Try again later!\n");
-					System.exit(0);
+					return false;
 				}
-
 			}
 		}
 		// if the option selected is 2, then the player uses a health potion.
-		else if (input.equalsIgnoreCase("heal"))
+		else if (getInput().equalsIgnoreCase("heal"))
 			player.useHealthPotion();
 
-		input = "";
+		setInput("");
 		return true;
 	}
 
@@ -159,16 +165,27 @@ public class ProjectCove
 	{
 		monster = new Monster(level);
 	}
-	
-	/*** Returns the player*/
+
+	/*** Returns the player */
 	public Player getPlayer()
 	{
 		return player;
 	}
 	
+	/*** Appends text to the display.*/
 	public static void setText(String text)
 	{
 		screenText.append(text);
+	}
+
+	public static String getInput()
+	{
+		return input;
+	}
+
+	public static void setInput(String input)
+	{
+		ProjectCove.input = input;
 	}
 
 }

@@ -1,8 +1,9 @@
 package projectCove;
-/* Hunter Baldwin
- * This class handles the weapons in the game. This
- * includes the damage they deal and the name.
+/*
+ * Hunter Baldwin This class handles the weapons in the game. This includes the
+ * damage they deal and the name.
  */
+
 import java.util.Random;
 
 public class Weapon
@@ -17,16 +18,25 @@ public class Weapon
 	private final String[] NAME_SUFFIX = { "of Killing", "of Enchantment", "of DEATH", "of Power",
 			"of Stupendous Strength", "of The Deep", "of Music", "of Wacky Things", "of 'It Works'" };
 
+	/*** Creates a randomized weapon with 1 minimum damage and 3 maximum damage. */
 	public Weapon()
 	{
 		randomize(1, 3);
 	}
 
+	/***
+	 * Creates a new weapon with a randomized name and a randomized damage with a
+	 * max of your choice.
+	 */
 	public Weapon(int minDamage, int maxDamage)
 	{
 		randomize(minDamage, maxDamage);
 	}
-	
+
+	/***
+	 * Create a weapon with a name of your choice and randomized max and min damage
+	 * of your choice.
+	 */
 	public Weapon(String name, String type, int minDamage, int maxDamage)
 	{
 		this.name = name;
@@ -34,6 +44,9 @@ public class Weapon
 		randomize(minDamage, maxDamage);
 	}
 
+	/***
+	 * Randomizes the weapons name and damage with max damage values of your choice.
+	 */
 	public void randomize(int minModifier, int maxModifier)
 	{
 		Random rand = new Random();
