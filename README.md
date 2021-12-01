@@ -3,7 +3,9 @@ Text-based adventure game written in Java using the Swing GUI library. Very limi
 
 ## Features
 `Go [area]` - `go` allows you to attempt to go to a new area, or inspect something in the area.
+<br>
 `Look [thing]` - Inspect relevant items, areas, or clues in your immediate area.
+<br>
 `Pickup [item]` - `pickup` attempts to pickup an item
 
 ### Issues
